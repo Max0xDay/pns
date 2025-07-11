@@ -119,8 +119,10 @@ export class DNSServer {
       }
 
       const cacheKey = `${question.name}:${question.type}`;
+      
       if (this.config.config!.cache.enabled) {
         const cached = this.cache.get(cacheKey);
+        
         if (cached) {
           queryInfo.cached = true;
           const response = new DNSPacket(cached).parse();

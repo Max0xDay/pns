@@ -21,16 +21,20 @@ export class DNSCache {
         this.cache.delete(firstKey);
       }
     }
+    const expires = Date.now() + (ttl * 1000);
     this.cache.set(key, {
       value,
-      expires: Date.now() + (ttl * 1000)
+      expires
     });
   }
 
   get(key: string): Uint8Array | null {
     const entry = this.cache.get(key);
-    if (!entry) return null;
-    if (Date.now() > entry.expires) {
+    if (!entry) {
+      return null;
+    }
+    const now = Date.now();
+    if (now > entry.expires) {
       this.cache.delete(key);
       return null;
     }

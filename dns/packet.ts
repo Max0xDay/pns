@@ -276,6 +276,14 @@ export class DNSPacket {
       buffers.push(this.encodeResourceRecord(answer));
     }
     
+    for (const authority of this.authorities) {
+      buffers.push(this.encodeResourceRecord(authority));
+    }
+    
+    for (const additional of this.additionals) {
+      buffers.push(this.encodeResourceRecord(additional));
+    }
+    
     return this.concatenateBuffers(buffers);
   }
 

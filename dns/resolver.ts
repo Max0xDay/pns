@@ -12,8 +12,10 @@ export class DNSResolver {
   async resolve(packet: DNSPacket): Promise<DNSPacket> {
     for (const server of this.servers) {
       try {
-        return await this.queryServer(server, packet);
-      } catch (_err) {
+        const result = await this.queryServer(server, packet);
+        return result;
+      } catch (err) {
+        console.error(`DNS server ${server} failed: ${err instanceof Error ? err.message : String(err)}`);
         continue;
       }
     }
@@ -21,7 +23,17 @@ export class DNSResolver {
   }
 
   private async queryServer(server: string, packet: DNSPacket): Promise<DNSPacket> {
-    const query = packet.toBuffer();
+    const cleanQuery = DNSPacket.createResponse(packet);
+    cleanQuery.header.qr = 0; //query response
+    cleanQuery.header.ra = 0; // Recursion available
+    cleanQuery.header.ancount = 0;
+    cleanQuery.header.nscount = 0;
+    cleanQuery.header.arcount = 0;
+    cleanQuery.answers = [];
+    cleanQuery.authorities = [];
+    cleanQuery.additionals = [];
+    
+    const query = cleanQuery.toBuffer();
     
     const conn = await Deno.connect({
       hostname: server,
