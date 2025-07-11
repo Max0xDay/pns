@@ -1,6 +1,8 @@
 # PNS - Perfect Name Server
 
 A test concept of a deno written DNS Server built for understanding purposes.
+## Screenshots
+<img width="1491" height="708" alt="image" src="https://github.com/user-attachments/assets/c5da36fa-1174-48eb-af58-26203609ccc9" />
 
 ## Features
 
