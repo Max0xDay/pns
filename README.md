@@ -155,6 +155,22 @@ Access the web interface at `http://localhost:8080` (or your configured port).
 - **NS Records**: Name servers
 - **PTR Records**: Reverse DNS
 
+## Testing
+
+You can test the DNS server functionality using the following commands:
+
+### Test Normal DNS Resolution
+```bash
+dig @127.0.0.1 -p 5353 +tcp google.com +short
+```
+
+### Test Domain Blocking
+```bash
+dig @127.0.0.1 -p 5353 +tcp bad.com +short
+```
+
+The first command should return IP addresses for google.com, while the second should return no results (NXDOMAIN) if bad.com is in the blocklist.
+
 ## License
 
  This project is open source and available under the MIT License.

@@ -26,6 +26,18 @@ export function createWebServer(deps: ServerDependencies) {
 
   router.get("/api/stats", (ctx) => {
     const systemInfo = Deno.systemMemoryInfo?.();
+   
+    //worst estimate ever
+    let cpuUsage = 0;
+    try {
+      const loadavg = Deno.loadavg?.();
+      if (loadavg && loadavg.length > 0) {
+        cpuUsage = Math.min(Math.round(loadavg[0] * 100), 100);
+      }
+    } catch {
+      cpuUsage = 0;
+    }
+    
     ctx.response.body = {
       uptime: Date.now() - deps.startTime,
       queries: deps.logger.getStats(),
@@ -33,6 +45,9 @@ export function createWebServer(deps: ServerDependencies) {
       system: {
         hostname: Deno.hostname(),
         platform: Deno.build.os,
+        cpu: {
+          usage: cpuUsage
+        },
         memory: {
           total: systemInfo?.total || 0,
           free: systemInfo?.free || 0
